@@ -1,0 +1,6 @@
+<tr>
+  <td>{{ stock.name }}</td>
+  <td>{{ stock.quantity }}</td>
+  <td>{{ stock.price | currency:'EUR' }}</td>
+  <td>{{ stock.price * stock.quantity | currency:'EUR' }}</td>
+</tr>

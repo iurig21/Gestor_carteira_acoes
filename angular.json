@@ -85,12 +85,16 @@
               }
             ],
             "styles": [
-              "src/styles.css"
-            ],
+  "node_modules/bootstrap/dist/css/bootstrap.min.css",
+  "src/styles.css"
+],
             "scripts": []
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "70219d26-0a69-4330-807e-00a5bf497e75"
   }
 }

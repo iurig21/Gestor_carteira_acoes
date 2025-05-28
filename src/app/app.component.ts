@@ -1,12 +1,18 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { PortfolioComponent } from './components/portfolio/portfolio.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  standalone: true,
+  imports: [CommonModule, PortfolioComponent],
+  template: `
+    <div class="app-container">
+      <app-portfolio></app-portfolio>
+    </div>
+  `,
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'TP';
+  title = 'Stock Portfolio Monitor';
 }

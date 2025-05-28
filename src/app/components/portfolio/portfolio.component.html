@@ -1,0 +1,121 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="mb-4">Stock Portfolio Monitor</h1>
+      
+      <!-- Loading State -->
+      @if (loading) {
+        <div class="d-flex justify-content-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      }
+      
+      <!-- Error State -->
+      @if (error) {
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+          <button class="btn btn-link" (click)="loadPortfolio()">Try Again</button>
+        </div>
+      }
+      
+      <!-- Portfolio Data -->
+      @if (portfolio$ | async; as portfolio) {
+        <div class="card">
+          <div class="card-header">
+            <h3 class="mb-0">Portfolio Summary</h3>
+          </div>
+          <div class="card-body">
+            <!-- Portfolio Table -->
+            <div class="table-responsive">
+              <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Ticker</th>
+                    <th>Company</th>
+                    <th>Purchase Date</th>
+                    <th>Quantity</th>
+                    <th>Purchase Price</th>
+                    <th>Total Purchase</th>
+                    <th>Current Price</th>
+                    <th>Current Value</th>
+                    <th>Variation (%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (stock of portfolio.stocks; track stock.ticker) {
+                    <tr>
+                      <td><strong>{{ stock.ticker }}</strong></td>
+                      <td>{{ stock.company }}</td>
+                      <td>{{ stock.purchaseDate | date:'dd/MM/yyyy' }}</td>
+                      <td>{{ stock.quantity }}</td>
+                      <td>{{ formatCurrency(stock.purchasePrice) }}</td>
+                      <td>{{ formatCurrency(stock.quantity * stock.purchasePrice) }}</td>
+                      <td>{{ formatCurrency(stock.currentPrice || 0) }}</td>
+                      <td>{{ formatCurrency(stock.quantity * (stock.currentPrice || 0)) }}</td>
+                      <td [class]="getVariationClass(stock.variation || 0)">
+                        <strong>{{ formatPercentage(stock.variation || 0) }}</strong>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+                <tfoot class="table-secondary">
+                  <tr>
+                    <th colspan="5">TOTAL</th>
+                    <th>{{ formatCurrency(portfolio.totalPurchaseValue) }}</th>
+                    <th colspan="1"></th>
+                    <th>{{ formatCurrency(portfolio.totalCurrentValue) }}</th>
+                    <th [class]="getVariationClass(portfolio.totalVariation)">
+                      <strong>{{ formatPercentage(portfolio.totalVariation) }}</strong>
+                    </th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            
+            <!-- Summary Cards -->
+            <div class="row mt-4">
+              <div class="col-md-4">
+                <div class="card bg-light">
+                  <div class="card-body text-center">
+                    <h5 class="card-title">Total Investment</h5>
+                    <h3 class="text-primary">{{ formatCurrency(portfolio.totalPurchaseValue) }}</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card bg-light">
+                  <div class="card-body text-center">
+                    <h5 class="card-title">Current Value</h5>
+                    <h3 class="text-info">{{ formatCurrency(portfolio.totalCurrentValue) }}</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card bg-light">
+                  <div class="card-body text-center">
+                    <h5 class="card-title">Total Variation</h5>
+                    <h3 [class]="getVariationClass(portfolio.totalVariation)">
+                      {{ formatPercentage(portfolio.totalVariation) }}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      
+      <!-- Refresh Button -->
+      <div class="text-center mt-3">
+        <button class="btn btn-primary" (click)="loadPortfolio()" [disabled]="loading">
+          @if (loading) {
+            <span class="spinner-border spinner-border-sm me-2"></span>
+          }
+          Refresh Portfolio
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
