@@ -8,7 +8,7 @@ import { Stock, ApiQuote } from '../models/stock.interface';
   providedIn: 'root'
 })
 export class StockService {
-  private apiKey = '9155f0c438dd514f0ae92274358d6fd9'; // Replace with your API key
+  private apiKey = '476990089f57343096ebce4d575779da'; // Replace with your API key
   private baseUrl = 'http://api.marketstack.com/v1';
 
   constructor(private http: HttpClient) {}

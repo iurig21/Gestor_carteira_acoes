@@ -1,0 +1,28 @@
+{
+  "portfolio": [
+    {
+      "id": "1",
+      "ticker": "MSFT",
+      "company": "Microsoft",
+      "purchaseDate": "2025-03-01",
+      "quantity": 20,
+      "purchasePrice": 320
+    },
+    {
+      "id": "2",
+      "ticker": "TSLA",
+      "company": "Tesla",
+      "purchaseDate": "2025-03-20",
+      "quantity": 50,
+      "purchasePrice": 220
+    },
+    {
+      "id": "7719",
+      "ticker": "NVDA",
+      "company": "NVDA",
+      "purchaseDate": "2025-05-31T23:16:24.097Z",
+      "quantity": 10,
+      "purchasePrice": 130
+    }
+  ]
+}

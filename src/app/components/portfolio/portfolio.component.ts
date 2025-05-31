@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { PortfolioService } from '../../services/portfolio.service';
+import { BehaviorSubject } from 'rxjs';
+import { Stock, Portfolio } from '../../models/stock.interface';
 import { StockService } from '../../services/stock.service';
-import { Portfolio, Stock } from '../../models/stock.interface';
+import { PortfolioService } from '../../services/portfolio.service';
 
 @Component({
   selector: 'app-portfolio',
@@ -14,24 +14,25 @@ import { Portfolio, Stock } from '../../models/stock.interface';
   styleUrls: ['./portfolio.component.css']
 })
 export class PortfolioComponent implements OnInit {
-  // Initialize portfolio$ as a BehaviorSubject to allow mutable updates
   portfolio$ = new BehaviorSubject<Portfolio>({
     stocks: [],
     totalPurchaseValue: 0,
     totalCurrentValue: 0,
     totalVariation: 0
   });
-  loading = true;
-  error: string | null = null;
 
-  // New properties for manual stock entry
+  // Form fields
   newTicker = '';
   newQuantity = 0;
   newPrice = 0;
 
+  // UI state
+  loading = false;
+  error: string | null = null;
+
   constructor(
-    private portfolioService: PortfolioService,
-    private stockService: StockService // new injection
+    private stockService: StockService,
+    private portfolioService: PortfolioService
   ) {}
 
   ngOnInit(): void {
@@ -41,77 +42,33 @@ export class PortfolioComponent implements OnInit {
   loadPortfolio(): void {
     this.loading = true;
     this.error = null;
-    
     this.portfolioService.getPortfolio().subscribe({
-      next: data => {
-        this.portfolio$.next(data);
+      next: portfolio => {
+        this.portfolio$.next(portfolio);
         this.loading = false;
       },
-      error: (err) => {
-        this.loading = false;
+      error: err => {
         this.error = 'Failed to load portfolio data';
-        console.error('Portfolio loading error:', err);
+        this.loading = false;
       }
     });
   }
 
-  // New method to handle JSON file upload for portfolio data
-  onFileSelected(event: any): void {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      try {
-        const jsonData = JSON.parse(e.target.result);
-        if (jsonData.stocks) {
-          const current = this.portfolio$.value;
-          const updatedStocks = current.stocks.concat(jsonData.stocks);
-          // Optionally recalc totals here if needed
-         const totals = this.recalculateTotals(updatedStocks);
-this.portfolio$.next({
-  stocks: updatedStocks,
-  ...totals
-});
-        }
-      } catch (err) {
-        console.error('Invalid JSON file', err);
-      }
-    };
-    reader.readAsText(file);
-  }
-
-  // Modified addStock method using StockService to retrieve current price and variation
   addStock(): void {
     if (!this.newTicker || this.newQuantity <= 0 || this.newPrice <= 0) return;
-    
-    // Create a new stock with initial values
+
+    // Create stock with static info; currentPrice & variation will be updated on next load.
     let newStock: Stock = {
       ticker: this.newTicker,
-      company: this.newTicker, // Placeholder, update if needed
+      company: this.newTicker, // placeholder; could be updated via an API call if needed
       purchaseDate: new Date().toISOString(),
       quantity: this.newQuantity,
       purchasePrice: this.newPrice,
-      currentPrice: this.newPrice, // default, will be updated
-      variation: 0
+      // Do not set currentPrice or variation here – let them update from the API when loading portfolio.
     };
 
-    // Call marketstack API for current data
-    this.stockService.getStockQuotes([this.newTicker]).subscribe(apiQuotes => {
-      if (apiQuotes && apiQuotes.length) {
-        const quote = apiQuotes[0];
-        newStock.currentPrice = quote.price;
-        const totalPurchase = newStock.purchasePrice * newStock.quantity;
-        const currentValue = newStock.currentPrice * newStock.quantity;
-        newStock.variation = ((currentValue - totalPurchase) / totalPurchase) * 100;
-      }
-      // Merge the new stock into the current portfolio
-      const current = this.portfolio$.value;
-      const updatedStocks = current.stocks.concat(newStock);
-      const totals = this.recalculateTotals(updatedStocks);
-      this.portfolio$.next({
-        stocks: updatedStocks,
-        ...totals
-      });
+    this.portfolioService.addStockToPortfolio(newStock).subscribe(() => {
+      this.loadPortfolio();
     });
 
     // Reset form fields
@@ -120,29 +77,37 @@ this.portfolio$.next({
     this.newPrice = 0;
   }
 
-  private recalculateTotals(stocks: Stock[]) {
-    const totalPurchaseValue = stocks.reduce((sum, s) => sum + (s.purchasePrice * s.quantity), 0);
-    const totalCurrentValue = stocks.reduce((sum, s) => sum + ((s.currentPrice || s.purchasePrice) * s.quantity), 0);
-    const totalVariation = totalPurchaseValue === 0
-      ? 0
-      : ((totalCurrentValue - totalPurchaseValue) / totalPurchaseValue) * 100;
-    return { totalPurchaseValue, totalCurrentValue, totalVariation };
+  // For file upload (optional, if you want to support JSON import)
+  onFileSelected(event: Event): void {
+    const element = event.target as HTMLInputElement;
+    const file = element.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const json = JSON.parse(e.target?.result as string);
+          // You can process the imported JSON here if needed
+          // For example, replace the portfolio in json-server via a PUT request
+        } catch (error) {
+          this.error = 'Error parsing JSON file';
+        }
+      };
+      reader.readAsText(file);
+    }
+  }
+
+  // Helpers for formatting and styling
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0);
+  }
+
+  formatPercentage(value: number): string {
+    return `${value > 0 ? '+' : ''}${(value || 0).toFixed(2)}%`;
   }
 
   getVariationClass(variation: number): string {
     if (variation > 0) return 'text-success';
     if (variation < 0) return 'text-danger';
     return 'text-dark';
-  }
-
-  formatCurrency(value: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(value);
-  }
-
-  formatPercentage(value: number): string {
-    return `${value > 0 ? '+' : ''}${value.toFixed(2)}%`;
   }
 }
