@@ -25,7 +25,8 @@ export class StockService {
         map(response => ({
           symbol: symbol,
           price: response.data[0]?.close || 0,
-          change_pct: this.calculateVariation(response.data[0]?.close, response.data[0]?.open)
+          // The change_pct here is just per-share, not total investment
+          change_pct: this.calculateVariation(response.data[0]?.close, response.data[0]?.open || 0)
         })),
         catchError(() => of({
           symbol: symbol,
@@ -48,18 +49,37 @@ export class StockService {
         company: 'Microsoft',
         purchaseDate: '2025-03-01',
         quantity: 20,
-        purchasePrice: 320.00
+        purchasePrice: 320.00,
+        currentPrice: 460.36,
+        // Correct total investment variation calculation:
+        variation: this.calculateTotalVariation(460.36, 320.00, 20)
       },
       {
         ticker: 'TSLA',
         company: 'Tesla',
         purchaseDate: '2025-03-20',
         quantity: 50,
-        purchasePrice: 220.00
+        purchasePrice: 220.00,
+        currentPrice: 346.46,
+        variation: this.calculateTotalVariation(346.46, 220.00, 50)
       }
     ]);
   }
 
+  /**
+   * Calculates the variation based on total investment:
+   * ((currentPrice * quantity) - (purchasePrice * quantity)) / (purchasePrice * quantity) * 100
+   */
+  private calculateTotalVariation(currentPrice: number, purchasePrice: number, quantity: number): number {
+    const totalPurchase = purchasePrice * quantity;
+    const currentValue = currentPrice * quantity;
+    if (!totalPurchase) return 0;
+    return ((currentValue - totalPurchase) / totalPurchase) * 100;
+  }
+
+  /**
+   * Per-share variation (not used for total investment variation in the table)
+   */
   private calculateVariation(current: number, previous: number): number {
     if (!previous) return 0;
     return ((current - previous) / previous) * 100;

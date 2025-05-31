@@ -3,6 +3,36 @@
     <div class="col-12">
       <h1 class="mb-4">Stock Portfolio Monitor</h1>
       
+      <!-- New section for JSON upload and manual stock addition -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <label for="jsonFile" class="form-label"><strong>Load Portfolio JSON:</strong></label>
+              <input id="jsonFile" type="file" accept=".json" class="form-control" (change)="onFileSelected($event)" />
+            </div>
+            <div class="col-md-6">
+              <form (ngSubmit)="addStock()">
+                <h4 class="mb-3">Add New Stock</h4>
+                <div class="mb-3">
+                  <label for="ticker" class="form-label">Ticker</label>
+                  <input type="text" id="ticker" class="form-control" placeholder="Ticker" [(ngModel)]="newTicker" name="ticker" required>
+                </div>
+                <div class="mb-3">
+                  <label for="quantity" class="form-label">Quantity</label>
+                  <input type="number" id="quantity" class="form-control" placeholder="Quantity" [(ngModel)]="newQuantity" name="quantity" required>
+                </div>
+                <div class="mb-3">
+                  <label for="price" class="form-label">Price</label>
+                  <input type="number" id="price" class="form-control" placeholder="Price" [(ngModel)]="newPrice" name="price" required>
+                </div>
+                <button type="submit" class="btn btn-success">Add Stock</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <!-- Loading State -->
       @if (loading) {
         <div class="d-flex justify-content-center">
@@ -54,8 +84,13 @@
                       <td>{{ formatCurrency(stock.quantity * stock.purchasePrice) }}</td>
                       <td>{{ formatCurrency(stock.currentPrice || 0) }}</td>
                       <td>{{ formatCurrency(stock.quantity * (stock.currentPrice || 0)) }}</td>
-                      <td [class]="getVariationClass(stock.variation || 0)">
-                        <strong>{{ formatPercentage(stock.variation || 0) }}</strong>
+                      <td [class]="getVariationClass((((stock.currentPrice || 0) * stock.quantity - stock.purchasePrice * stock.quantity) / (stock.purchasePrice * stock.quantity) * 100))">
+                        <strong>
+                          {{
+                            (((stock.currentPrice || 0) * stock.quantity - stock.purchasePrice * stock.quantity) / (stock.purchasePrice * stock.quantity) * 100) 
+                              | number:'1.2-2'
+                          }}%
+                        </strong>
                       </td>
                     </tr>
                   }
