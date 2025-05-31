@@ -67,7 +67,11 @@ export class PortfolioComponent implements OnInit {
           const current = this.portfolio$.value;
           const updatedStocks = current.stocks.concat(jsonData.stocks);
           // Optionally recalc totals here if needed
-          this.portfolio$.next({ ...current, stocks: updatedStocks });
+         const totals = this.recalculateTotals(updatedStocks);
+this.portfolio$.next({
+  stocks: updatedStocks,
+  ...totals
+});
         }
       } catch (err) {
         console.error('Invalid JSON file', err);
@@ -103,13 +107,26 @@ export class PortfolioComponent implements OnInit {
       // Merge the new stock into the current portfolio
       const current = this.portfolio$.value;
       const updatedStocks = current.stocks.concat(newStock);
-      this.portfolio$.next({ ...current, stocks: updatedStocks });
+      const totals = this.recalculateTotals(updatedStocks);
+      this.portfolio$.next({
+        stocks: updatedStocks,
+        ...totals
+      });
     });
 
     // Reset form fields
     this.newTicker = '';
     this.newQuantity = 0;
     this.newPrice = 0;
+  }
+
+  private recalculateTotals(stocks: Stock[]) {
+    const totalPurchaseValue = stocks.reduce((sum, s) => sum + (s.purchasePrice * s.quantity), 0);
+    const totalCurrentValue = stocks.reduce((sum, s) => sum + ((s.currentPrice || s.purchasePrice) * s.quantity), 0);
+    const totalVariation = totalPurchaseValue === 0
+      ? 0
+      : ((totalCurrentValue - totalPurchaseValue) / totalPurchaseValue) * 100;
+    return { totalPurchaseValue, totalCurrentValue, totalVariation };
   }
 
   getVariationClass(variation: number): string {
