@@ -23,6 +23,22 @@
       "purchaseDate": "2025-05-31T23:16:24.097Z",
       "quantity": 10,
       "purchasePrice": 130
+    },
+    {
+      "id": "c895",
+      "ticker": "AAPL",
+      "company": "Apple",
+      "purchaseDate": "2025-02-15",
+      "quantity": 30,
+      "purchasePrice": 180
+    },
+    {
+      "id": "a07e",
+      "ticker": "MCD ",
+      "company": "MCD ",
+      "purchaseDate": "2025-05-31T23:57:06.160Z",
+      "quantity": 10,
+      "purchasePrice": 10
     }
   ]
 }

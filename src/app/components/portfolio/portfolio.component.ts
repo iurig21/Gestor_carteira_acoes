@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, forkJoin } from 'rxjs';
 import { Stock, Portfolio } from '../../models/stock.interface';
 import { StockService } from '../../services/stock.service';
 import { PortfolioService } from '../../services/portfolio.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-portfolio',
@@ -32,7 +33,8 @@ export class PortfolioComponent implements OnInit {
 
   constructor(
     private stockService: StockService,
-    private portfolioService: PortfolioService
+    private portfolioService: PortfolioService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -86,8 +88,18 @@ export class PortfolioComponent implements OnInit {
       reader.onload = (e) => {
         try {
           const json = JSON.parse(e.target?.result as string);
-          // You can process the imported JSON here if needed
-          // For example, replace the portfolio in json-server via a PUT request
+          const imported = json.portfolio || json.stocks;
+          if (Array.isArray(imported)) {
+            // POST each imported stock to json-server
+            forkJoin(imported.map(stock =>
+              this.http.post('http://localhost:3000/portfolio', stock)
+            )).subscribe({
+              next: () => this.loadPortfolio(),
+              error: () => this.error = 'Failed to import stocks'
+            });
+          } else {
+            this.error = 'Invalid JSON format';
+          }
         } catch (error) {
           this.error = 'Error parsing JSON file';
         }
