@@ -71,6 +71,7 @@
                     <th>Current Price</th>
                     <th>Current Value</th>
                     <th>Variation (%)</th>
+                    <th>Actions</th> <!-- New Actions column -->
                   </tr>
                 </thead>
                 <tbody>
@@ -92,11 +93,16 @@
                           }}%
                         </strong>
                       </td>
+                      <td>
+                        <button class="btn btn-danger btn-sm" (click)="deleteStock(stock.id)">
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   }
                 </tbody>
-                <tfoot class="table-secondary">
-                  <tr>
+                <tfoot>
+                  <tr class="table-secondary">
                     <th colspan="5">TOTAL</th>
                     <th>{{ formatCurrency(portfolio.totalPurchaseValue) }}</th>
                     <th colspan="1"></th>
@@ -104,6 +110,7 @@
                     <th [ngClass]="getVariationClass(portfolio.totalVariation)">
                       <strong>{{ formatPercentage(portfolio.totalVariation) }}</strong>
                     </th>
+                    <th></th>
                   </tr>
                 </tfoot>
               </table>

@@ -73,4 +73,8 @@ export class PortfolioService {
   addStockToPortfolio(stock: Stock): Observable<Stock> {
     return this.http.post<Stock>(this.url, stock);
   }
+
+  deleteStockFromPortfolio(id: string | number) {
+    return this.http.delete(`http://localhost:3000/portfolio/${id}`);
+  }
 }

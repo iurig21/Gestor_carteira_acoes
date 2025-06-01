@@ -61,6 +61,7 @@ export class PortfolioComponent implements OnInit {
 
     // Create stock with static info; currentPrice & variation will be updated on next load.
     let newStock: Stock = {
+      id: Date.now().toString(), // Generate a unique ID using timestamp
       ticker: this.newTicker,
       company: this.newTicker, // placeholder; could be updated via an API call if needed
       purchaseDate: new Date().toISOString(),
@@ -77,6 +78,13 @@ export class PortfolioComponent implements OnInit {
     this.newTicker = '';
     this.newQuantity = 0;
     this.newPrice = 0;
+  }
+
+  deleteStock(id: string | number): void {
+    this.portfolioService.deleteStockFromPortfolio(id).subscribe({
+      next: () => this.loadPortfolio(),
+      error: () => this.error = 'Failed to delete stock'
+    });
   }
 
   // For file upload (optional, if you want to support JSON import)

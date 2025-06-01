@@ -1,4 +1,5 @@
 export interface Stock {
+  id: string;
   ticker: string;
   company: string;
   purchaseDate: string;
