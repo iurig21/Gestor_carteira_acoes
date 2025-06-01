@@ -1,32 +1,32 @@
 <div class="container mt-4">
   <div class="row">
     <div class="col-12">
-      <h1 class="mb-4">Stock Portfolio Monitor</h1>
+      <h1 class="mb-4">Gestor de carteira de ações</h1>
       
       <!-- New section for JSON upload and manual stock addition -->
       <div class="card mb-4">
         <div class="card-body">
           <div class="row">
             <div class="col-md-6">
-              <label for="jsonFile" class="form-label"><strong>Load Portfolio JSON:</strong></label>
+              <label for="jsonFile" class="form-label"><strong>Carregar portfolio json:</strong></label>
               <input id="jsonFile" type="file" accept=".json" class="form-control" (change)="onFileSelected($event)" />
             </div>
             <div class="col-md-6">
               <form (ngSubmit)="addStock()">
-                <h4 class="mb-3">Add New Stock</h4>
+                <h4 class="mb-3">Adicionar ação</h4>
                 <div class="mb-3">
                   <label for="ticker" class="form-label">Ticker</label>
                   <input type="text" id="ticker" class="form-control" placeholder="Ticker" [(ngModel)]="newTicker" name="ticker" required>
                 </div>
                 <div class="mb-3">
-                  <label for="quantity" class="form-label">Quantity</label>
+                  <label for="quantity" class="form-label">Quantidade</label>
                   <input type="number" id="quantity" class="form-control" placeholder="Quantity" [(ngModel)]="newQuantity" name="quantity" required>
                 </div>
                 <div class="mb-3">
-                  <label for="price" class="form-label">Price</label>
+                  <label for="price" class="form-label">Preço</label>
                   <input type="number" id="price" class="form-control" placeholder="Price" [(ngModel)]="newPrice" name="price" required>
                 </div>
-                <button type="submit" class="btn btn-success">Add Stock</button>
+                <button type="submit" class="btn btn-success">Adicionar</button>
               </form>
             </div>
           </div>
@@ -37,7 +37,7 @@
       @if (error) {
         <div class="alert alert-danger" role="alert">
           {{ error }}
-          <button class="btn btn-link" (click)="loadPortfolio()">Try Again</button>
+          <button class="btn btn-link" (click)="loadPortfolio()">Tente de novo</button>
         </div>
       }
       
@@ -45,7 +45,7 @@
       @if (loading) {
         <div class="d-flex justify-content-center">
           <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">Carregando...</span>
           </div>
         </div>
       }
@@ -54,7 +54,7 @@
       @if (portfolio$ | async; as portfolio) {
         <div class="card">
           <div class="card-header">
-            <h3 class="mb-0">Portfolio Summary</h3>
+            <h3 class="mb-0">Sumário da carteira</h3>
           </div>
           <div class="card-body">
             <!-- Portfolio Table -->
@@ -63,15 +63,15 @@
                 <thead class="table-dark">
                   <tr>
                     <th>Ticker</th>
-                    <th>Company</th>
-                    <th>Purchase Date</th>
-                    <th>Quantity</th>
-                    <th>Purchase Price</th>
-                    <th>Total Purchase</th>
-                    <th>Current Price</th>
-                    <th>Current Value</th>
-                    <th>Variation (%)</th>
-                    <th>Actions</th> <!-- New Actions column -->
+                    <th>Empresa</th>
+                    <th>Data de compra</th>
+                    <th>Quantidade</th>
+                    <th>Preço da compra</th>
+                    <th>Total</th>
+                    <th>Cotação do dia</th>
+                    <th>Valor</th>
+                    <th>Variação (%)</th>
+                    <th>Ação</th> <!-- New Actions column -->
                   </tr>
                 </thead>
                 <tbody>
@@ -95,7 +95,7 @@
                       </td>
                       <td>
                         <button class="btn btn-danger btn-sm" (click)="deleteStock(stock.id)">
-                          Delete
+                          Deletar
                         </button>
                       </td>
                     </tr>
@@ -121,7 +121,7 @@
               <div class="col-md-4">
                 <div class="card bg-light">
                   <div class="card-body text-center">
-                    <h5 class="card-title">Total Investment</h5>
+                    <h5 class="card-title">Total investido</h5>
                     <h3 class="text-primary">{{ formatCurrency(portfolio.totalPurchaseValue) }}</h3>
                   </div>
                 </div>
@@ -129,7 +129,7 @@
               <div class="col-md-4">
                 <div class="card bg-light">
                   <div class="card-body text-center">
-                    <h5 class="card-title">Current Value</h5>
+                    <h5 class="card-title">Valor atual</h5>
                     <h3 class="text-info">{{ formatCurrency(portfolio.totalCurrentValue) }}</h3>
                   </div>
                 </div>
@@ -137,7 +137,7 @@
               <div class="col-md-4">
                 <div class="card bg-light">
                   <div class="card-body text-center">
-                    <h5 class="card-title">Total Variation</h5>
+                    <h5 class="card-title">Variação total</h5>
                     <h3 [class]="getVariationClass(portfolio.totalVariation)">
                       {{ formatPercentage(portfolio.totalVariation) }}
                     </h3>
@@ -155,7 +155,7 @@
           @if (loading) {
             <span class="spinner-border spinner-border-sm me-2"></span>
           }
-          Refresh Portfolio
+          Recarregar portfolio
         </button>
       </div>
     </div>

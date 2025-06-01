@@ -118,7 +118,7 @@ export class PortfolioComponent implements OnInit {
 
   // Helpers for formatting and styling
   formatCurrency(value: number): string {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value || 0);
+    return value.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
   }
 
   formatPercentage(value: number): string {
