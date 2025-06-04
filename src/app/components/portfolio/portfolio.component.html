@@ -2,6 +2,9 @@
   <div class="row">
     <div class="col-12">
       <h1 class="mb-4">Gestor de carteira de ações</h1>
+      <div class="alert alert-info mb-4">
+        Saldo fictício: <strong>{{ formatCurrency(saldo) }}</strong>
+      </div>
       
       <!-- New section for JSON upload and manual stock addition -->
       <div class="card mb-4">
@@ -13,7 +16,7 @@
             </div>
             <div class="col-md-6">
               <form (ngSubmit)="addStock()">
-                <h4 class="mb-3">Adicionar ação</h4>
+                <h4 class="mb-3">Comprar ação</h4>
                 <div class="mb-3">
                   <label for="ticker" class="form-label">Ticker</label>
                   <input type="text" id="ticker" class="form-control" placeholder="Ticker" [(ngModel)]="newTicker" name="ticker" required>
@@ -26,7 +29,7 @@
                   <label for="price" class="form-label">Preço</label>
                   <input type="number" id="price" class="form-control" placeholder="Price" [(ngModel)]="newPrice" name="price" required>
                 </div>
-                <button type="submit" class="btn btn-success">Adicionar</button>
+                <button type="submit" class="btn btn-success">Comprar</button>
               </form>
             </div>
           </div>
@@ -95,7 +98,7 @@
                       </td>
                       <td>
                         <button class="btn btn-danger btn-sm" (click)="deleteStock(stock.id)">
-                          Deletar
+                          Vender
                         </button>
                       </td>
                     </tr>

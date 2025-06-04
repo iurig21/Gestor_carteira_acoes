@@ -31,6 +31,8 @@ export class PortfolioComponent implements OnInit {
   loading = false;
   error: string | null = null;
 
+  saldo = 100000; // Saldo fictício inicial em euros
+
   constructor(
     private stockService: StockService,
     private portfolioService: PortfolioService,
@@ -59,6 +61,12 @@ export class PortfolioComponent implements OnInit {
   addStock(): void {
     if (!this.newTicker || this.newQuantity <= 0 || this.newPrice <= 0) return;
 
+    const totalCompra = this.newQuantity * this.newPrice;
+    if (this.saldo < totalCompra) {
+      this.error = 'Saldo insuficiente para comprar!';
+      return;
+    }
+
     // Create stock with static info; currentPrice & variation will be updated on next load.
     let newStock: Stock = {
       id: Date.now().toString(), // Generate a unique ID using timestamp
@@ -71,6 +79,7 @@ export class PortfolioComponent implements OnInit {
     };
 
     this.portfolioService.addStockToPortfolio(newStock).subscribe(() => {
+      this.saldo -= totalCompra; // Atualiza saldo
       this.loadPortfolio();
     });
 
@@ -81,10 +90,18 @@ export class PortfolioComponent implements OnInit {
   }
 
   deleteStock(id: string | number): void {
-    this.portfolioService.deleteStockFromPortfolio(id).subscribe({
-      next: () => this.loadPortfolio(),
-      error: () => this.error = 'Failed to delete stock'
-    });
+    // Encontre a ação antes de deletar
+    const stock = this.portfolio$.value.stocks.find(s => s.id === id);
+    if (stock) {
+      const valorVenda = (stock.currentPrice || 0) * stock.quantity;
+      this.portfolioService.deleteStockFromPortfolio(id).subscribe({
+        next: () => {
+          this.saldo += valorVenda; // Atualiza saldo
+          this.loadPortfolio();
+        },
+        error: () => this.error = 'Failed to delete stock'
+      });
+    }
   }
 
   // For file upload (optional, if you want to support JSON import)

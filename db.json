@@ -7,22 +7,6 @@
       "purchaseDate": "2025-03-01",
       "quantity": 20,
       "purchasePrice": 320
-    },
-    {
-      "id": "2",
-      "ticker": "TSLA",
-      "company": "Tesla",
-      "purchaseDate": "2025-03-20",
-      "quantity": 50,
-      "purchasePrice": 220
-    },
-    {
-      "id": "1249",
-      "ticker": "AAPL",
-      "company": "Apple",
-      "purchaseDate": "2025-02-15",
-      "quantity": 30,
-      "purchasePrice": 180
     }
   ]
 }
