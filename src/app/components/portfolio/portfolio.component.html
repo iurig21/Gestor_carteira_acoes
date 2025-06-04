@@ -2,8 +2,19 @@
   <div class="row">
     <div class="col-12">
       <h1 class="mb-4">Gestor de carteira de ações</h1>
-      <div class="alert alert-info mb-4">
-        Saldo fictício: <strong>{{ formatCurrency(saldo) }}</strong>
+      
+      <!-- New saldo section -->
+      <div class="mb-4">
+        <div class="card shadow-lg border-success" style="background: linear-gradient(90deg, #e0ffe0 0%, #b2f7b2 100%);">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <span class="fs-4 fw-bold text-success">
+              💶 Saldo:
+            </span>
+            <span class="display-5 fw-bold text-success" style="letter-spacing: 1px;">
+              {{ formatCurrency(saldo) }}
+            </span>
+          </div>
+        </div>
       </div>
       
       <!-- New section for JSON upload and manual stock addition -->
@@ -160,6 +171,57 @@
           }
           Recarregar portfolio
         </button>
+      </div>
+      
+      <!-- New button to show history -->
+      <div class="d-flex justify-content-end mb-2">
+        <button class="btn btn-outline-secondary btn-lg" (click)="showHistory = true">
+          📈 Ver histórico de operações
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de histórico -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="showHistory">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-secondary text-white">
+        <h5 class="modal-title">Histórico de operações</h5>
+        <button type="button" class="btn-close" (click)="showHistory = false"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Ticker</th>
+              <th>Quantidade</th>
+              <th>Preço</th>
+              <th>Data/Hora</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let op of history">
+              <td>
+                <span [ngClass]="{'text-success': op.type === 'COMPRA', 'text-danger': op.type === 'VENDA'}">
+                  {{ op.type }}
+                </span>
+              </td>
+              <td>{{ op.ticker }}</td>
+              <td>{{ op.quantity }}</td>
+              <td>{{ formatCurrency(op.price) }}</td>
+              <td>{{ op.date | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+            </tr>
+            <tr *ngIf="history.length === 0">
+              <td colspan="5" class="text-center text-muted">Nenhuma operação registrada.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="showHistory = false">Fechar</button>
       </div>
     </div>
   </div>

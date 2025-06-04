@@ -33,6 +33,10 @@ export class PortfolioComponent implements OnInit {
 
   saldo = 100000; // Saldo fictício inicial em euros
 
+  // History state
+  showHistory = false;
+  history: { type: 'COMPRA' | 'VENDA', ticker: string, quantity: number, price: number, date: string }[] = [];
+
   constructor(
     private stockService: StockService,
     private portfolioService: PortfolioService,
@@ -80,13 +84,20 @@ export class PortfolioComponent implements OnInit {
 
     this.portfolioService.addStockToPortfolio(newStock).subscribe(() => {
       this.saldo -= totalCompra; // Atualiza saldo
+      this.history.push({
+        type: 'COMPRA',
+        ticker: this.newTicker,
+        quantity: this.newQuantity,
+        price: this.newPrice,
+        date: new Date().toISOString()
+      });
       this.loadPortfolio();
-    });
 
-    // Reset form fields
-    this.newTicker = '';
-    this.newQuantity = 0;
-    this.newPrice = 0;
+      // Reset form fields DEPOIS de registrar no histórico
+      this.newTicker = '';
+      this.newQuantity = 0;
+      this.newPrice = 0;
+    });
   }
 
   deleteStock(id: string | number): void {
@@ -94,6 +105,13 @@ export class PortfolioComponent implements OnInit {
     const stock = this.portfolio$.value.stocks.find(s => s.id === id);
     if (stock) {
       const valorVenda = (stock.currentPrice || 0) * stock.quantity;
+      this.history.push({
+        type: 'VENDA',
+        ticker: stock.ticker,
+        quantity: stock.quantity,
+        price: stock.currentPrice || 0,
+        date: new Date().toISOString()
+      });
       this.portfolioService.deleteStockFromPortfolio(id).subscribe({
         next: () => {
           this.saldo += valorVenda; // Atualiza saldo
