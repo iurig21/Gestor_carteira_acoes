@@ -1,4 +1,4 @@
-# TP
+# Gestor de carteira de ações
 
 Este projeto foi gerado usando o [Angular CLI](https://github.com/angular/angular-cli) versão 19.2.3.
 
