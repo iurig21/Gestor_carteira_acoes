@@ -1,59 +1,97 @@
 # TP
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.3.
+Este projeto foi gerado usando o [Angular CLI](https://github.com/angular/angular-cli) versão 19.2.3.
 
-## Development server
+## Requisitos
 
-To start a local development server, run:
+Antes de rodar o projeto, você deve ter o [json-server](https://github.com/typicode/json-server) instalado globalmente:
+
+```bash
+npm install -g json-server
+```
+
+## Iniciando o Backend (JSON Server)
+
+Para iniciar a API fake com o json-server, execute:
+
+```bash
+json-server --watch db.json
+```
+
+Isso iniciará um servidor REST API fake usando o arquivo `db.json`.
+
+### Endpoints da API (json-server)
+
+- `GET /portfolio`  
+  Retorna a lista de todas as ações da carteira.
+
+- `GET /portfolio/:id`  
+  Retorna uma ação específica pelo id.
+
+- `POST /portfolio`  
+  Adiciona uma nova ação à carteira.
+
+- `PUT /portfolio/:id`  
+  Atualiza todos os dados de uma ação existente.
+
+- `PATCH /portfolio/:id`  
+  Atualiza parcialmente os dados de uma ação existente.
+
+- `DELETE /portfolio/:id`  
+  Remove uma ação da carteira pelo id.
+
+## Servidor de Desenvolvimento
+
+Em um terminal separado, inicie o servidor de desenvolvimento do Angular:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Depois que o servidor estiver rodando, abra seu navegador e acesse `http://localhost:4200/`. A aplicação irá recarregar automaticamente sempre que você modificar qualquer um dos arquivos fonte.
 
-## Code scaffolding
+## Gerando Código
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+O Angular CLI possui ferramentas poderosas de geração de código. Para gerar um novo componente, execute:
 
 ```bash
-ng generate component component-name
+ng generate component nome-do-componente
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Para uma lista completa dos esquemas disponíveis (como `components`, `directives` ou `pipes`), execute:
 
 ```bash
 ng generate --help
 ```
 
-## Building
+## Build
 
-To build the project run:
+Para compilar o projeto, execute:
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Isso irá compilar seu projeto e salvar os artefatos de build no diretório `dist/`. Por padrão, o build de produção otimiza sua aplicação para performance e velocidade.
 
-## Running unit tests
+## Executando Testes Unitários
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Para executar testes unitários com o [Karma](https://karma-runner.github.io), use o comando:
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## Executando Testes de Integração (E2E)
 
-For end-to-end (e2e) testing, run:
+Para testes de ponta a ponta (e2e), execute:
 
 ```bash
 ng e2e
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+O Angular CLI não vem com um framework de testes e2e por padrão. Fique à vontade para escolher um que atenda às suas necessidades.
 
-## Additional Resources
+## Recursos Adicionais
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Para mais informações sobre o Angular CLI, incluindo referências detalhadas de comandos, visite a página [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli).
